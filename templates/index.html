@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Перевірка спаму</title>
+</head>
+<body>
+  <div id="container">
+    <h1>Перевірка спаму</h1>
+
+    <input id="inputText" type="text" placeholder="Введіть текст">
+    <button id="inputButton" onclick="checkSpam()">Перевірити</button>
+
+    <p id="prediction">Результат: </p>
+  </div>
+
+    <script>
+    async function checkSpam() {
+        const inputText = document.getElementById('inputText').value;
+
+        try {
+            const response = await fetch('/predict', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ input: inputText })
+            });
+
+            const result = await response.json();
+
+            console.log("Response from server:", result);  // Додано для дебагу
+
+            if (result.error) {
+                document.getElementById('prediction').innerText = result.error;
+            } else {
+                document.getElementById('prediction').innerText = `Ймовірність: ${result.prediction}`;
+            }
+        } catch (err) {
+            console.error("Помилка:", err);
+            document.getElementById('prediction').innerText = "Помилка сервера!";
+        }
+    }
+</script>
+
+
+</body>
+</html>
